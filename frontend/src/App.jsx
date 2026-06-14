@@ -7,6 +7,9 @@ import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
+import CartPage from './pages/CartPage';
+import OrderSuccessPage from './pages/OrderSuccessPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
   return (
@@ -17,11 +20,13 @@ export default function App() {
         <Route element={<Layout />}>
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
+          <Route path="/cart" element={<CartPage />} />
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/orders/:id" element={<OrderDetailPage />} />
+          <Route path="/order-success" element={<OrderSuccessPage />} />
           <Route path="/" element={<Navigate to="/products" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
-        <Route path="*" element={<Navigate to="/products" replace />} />
       </Routes>
     </AuthProvider>
   );

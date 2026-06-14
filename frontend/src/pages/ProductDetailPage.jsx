@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getProduct } from '../api/products';
 import { formatPrice } from '../utils/helpers';
+import { useCartStore } from '../store/cartStore';
 import PromotionTag from '../components/PromotionTag';
 import CountdownTimer from '../components/CountdownTimer';
 
@@ -21,6 +22,9 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [addedMsg, setAddedMsg] = useState('');
+  const addItem = useCartStore((s) => s.addItem);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -202,7 +206,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* 操作按钮 */}
-          <div style={{ display: 'flex', gap: 12 }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
             <button
               style={{
                 padding: '12px 32px',
@@ -212,8 +216,13 @@ export default function ProductDetailPage() {
                 fontWeight: 700,
                 borderRadius: 8,
                 border: 'none',
+                cursor: 'pointer',
               }}
-              onClick={() => alert('已加入购物车！(演示)')}
+              onClick={() => {
+                addItem(product, 1);
+                setAddedMsg('✓ 已加入购物车');
+                setTimeout(() => setAddedMsg(''), 2000);
+              }}
             >
               加入购物车
             </button>
@@ -226,11 +235,20 @@ export default function ProductDetailPage() {
                 fontWeight: 700,
                 borderRadius: 8,
                 border: 'none',
+                cursor: 'pointer',
               }}
-              onClick={() => alert('已下单！(演示)')}
+              onClick={() => {
+                addItem(product, 1);
+                navigate('/cart');
+              }}
             >
               立即购买
             </button>
+            {addedMsg && (
+              <span style={{ color: '#00b894', fontSize: 14, fontWeight: 600 }}>
+                {addedMsg}
+              </span>
+            )}
           </div>
         </div>
       </div>
