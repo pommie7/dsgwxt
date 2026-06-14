@@ -1,39 +1,22 @@
-import axios from 'axios';
+/**
+ * API Client — 基于 request.js 封装
+ * 向后兼容：保留与旧代码相同的接口风格
+ */
+import request from '../utils/request';
 
-const client = axios.create({
-  baseURL: '/api',
-  timeout: 15000,
-  headers: { 'Content-Type': 'application/json' },
-});
-
-// ---- Request interceptor: attach JWT token ----
-client.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+const client = {
+  get(url, config = {}) {
+    return request.get(url, config.params || {}, config);
   },
-  (error) => Promise.reject(error)
-);
-
-// ---- Response interceptor: handle 401 globally ----
-client.interceptors.response.use(
-  (response) => response.data,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      // Token expired or invalid — clear auth state and redirect to login
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      // Only redirect if not already on auth pages
-      if (!window.location.pathname.startsWith('/login') &&
-          !window.location.pathname.startsWith('/register')) {
-        window.location.href = '/login';
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+  post(url, data, config = {}) {
+    return request.post(url, data, config);
+  },
+  put(url, data, config = {}) {
+    return request.put(url, data, config);
+  },
+  delete(url, config = {}) {
+    return request.delete(url, config.params || {}, config);
+  },
+};
 
 export default client;
