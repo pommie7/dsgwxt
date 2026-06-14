@@ -3,7 +3,8 @@ const cors = require('cors');
 const morgan = require('morgan');
 const config = require('./config');
 const { initDatabase, saveDatabase } = require('./config/database');
-const errorHandler = require('./middleware/errorHandler');
+const { errorHandler } = require('./middleware/errorHandler');
+const Result = require('./utils/result');
 
 // Route modules
 const authRoutes = require('./routes/auth');
@@ -27,7 +28,7 @@ async function main() {
 
   // --- Health check ---
   app.get('/api/health', (_req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.json(Result.success({ status: 'ok' }, '服务运行正常'));
   });
 
   // --- API routes ---
@@ -37,7 +38,7 @@ async function main() {
 
   // --- 404 catch-all ---
   app.use((_req, res) => {
-    res.status(404).json({ code: 404, message: '接口不存在' });
+    res.status(404).json(Result.notFound('接口不存在'));
   });
 
   // --- Error handler (must be last) ---

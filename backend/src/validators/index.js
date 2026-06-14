@@ -1,4 +1,5 @@
 const { body, query, param, validationResult } = require('express-validator');
+const Result = require('../utils/result');
 
 /**
  * Middleware factory: validates the request and returns 422 on failure.
@@ -7,14 +8,15 @@ const { body, query, param, validationResult } = require('express-validator');
 function validate(req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
-      code: 422,
-      message: '参数校验失败',
-      errors: errors.array().map((e) => ({
-        field: e.path,
-        message: e.msg,
-      })),
-    });
+    return res.status(422).json(
+      Result.validationError(
+        '参数校验失败',
+        errors.array().map((e) => ({
+          field: e.path,
+          message: e.msg,
+        }))
+      )
+    );
   }
   next();
 }
@@ -83,10 +85,88 @@ const orderListRules = [
     .withMessage('订单状态不合法'),
 ];
 
+// ---- Product CRUD validators ----
+
+const productAddRules = [
+  body('name')
+    .trim()
+    .notEmpty().withMessage('商品名称不能为空')
+    .isLength({ max: 200 }).withMessage('商品名称不超过200字符'),
+  body('description')
+    .optional()
+    .trim()
+    .isLength({ max: 500 }).withMessage('商品描述不超过500字符'),
+  body('price')
+    .notEmpty().withMessage('商品价格不能为空')
+    .isDecimal({ min: '0.01' }).withMessage('价格必须大于0'),
+  body('stock')
+    .optional()
+    .isInt({ min: 0 }).withMessage('库存不能为负数'),
+  body('category')
+    .optional()
+    .trim()
+    .isLength({ max: 50 }).withMessage('分类名不超过50字符'),
+  body('image_url')
+    .optional()
+    .trim()
+    .isLength({ max: 500 }).withMessage('图片URL不超过500字符'),
+];
+
+const productUpdateRules = [
+  param('id').isInt({ min: 1 }).withMessage('商品ID必须为正整数'),
+  body('name')
+    .optional()
+    .trim()
+    .isLength({ max: 200 }).withMessage('商品名称不超过200字符'),
+  body('description')
+    .optional()
+    .trim()
+    .isLength({ max: 500 }).withMessage('商品描述不超过500字符'),
+  body('price')
+    .optional()
+    .isDecimal({ min: '0.01' }).withMessage('价格必须大于0'),
+  body('stock')
+    .optional()
+    .isInt({ min: 0 }).withMessage('库存不能为负数'),
+  body('category')
+    .optional()
+    .trim()
+    .isLength({ max: 50 }).withMessage('分类名不超过50字符'),
+  body('status')
+    .optional()
+    .isIn([0, 1]).withMessage('状态值必须为0或1'),
+];
+
+const productDeleteRules = [
+  param('id').isInt({ min: 1 }).withMessage('商品ID必须为正整数'),
+];
+
+const productQueryRules = [
+  query('page')
+    .optional()
+    .isInt({ min: 1 }).withMessage('页码必须为正整数'),
+  query('pageSize')
+    .optional()
+    .isInt({ min: 1, max: 100 }).withMessage('每页条数须在1-100之间'),
+  query('category')
+    .optional()
+    .trim(),
+  query('keyword')
+    .optional()
+    .trim(),
+  query('status')
+    .optional()
+    .isIn(['0', '1', '']).withMessage('状态值不合法'),
+];
+
 module.exports = {
   validate,
   registerRules,
   loginRules,
   createOrderRules,
   orderListRules,
+  productAddRules,
+  productUpdateRules,
+  productDeleteRules,
+  productQueryRules,
 };
