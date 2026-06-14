@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { listProducts } from '../api/products';
 import { getMockRequestCount, resetMockRequestCount } from '../utils/mock';
 import { formatPrice } from '../utils/helpers';
@@ -146,13 +147,55 @@ export default function ProductsPage() {
         <>
           <div className="products-grid">
             {products.map((p) => (
-              <div key={p.id} className="product-card">
+              <Link
+                to={`/products/${p.id}`}
+                key={p.id}
+                className="product-card"
+                style={{ display: 'flex', flexDirection: 'column', color: 'inherit', textDecoration: 'none', cursor: 'pointer' }}
+              >
+                {/* 促销小标签（列表页预览） */}
+                {p.promotion && (
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      background: p.promotion.type === 'flash_sale' ? '#ff7675'
+                        : p.promotion.type === 'limited' ? '#e17055'
+                        : p.promotion.type === 'new_arrival' ? '#00cec9'
+                        : '#fdcb6e',
+                      color: p.promotion.type === 'discount' ? '#2d3436' : '#fff',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      padding: '2px 10px',
+                      borderRadius: 10,
+                      alignSelf: 'flex-start',
+                      marginBottom: 6,
+                    }}
+                  >
+                    ⚡ {p.promotion.label}
+                  </span>
+                )}
                 <span className="category-tag">{p.category}</span>
                 <h3>{p.name}</h3>
                 <p className="desc">{p.description}</p>
-                <div className="price">{formatPrice(p.price)}</div>
-                <div className="stock">库存: {p.stock} 件</div>
-              </div>
+                {p.promotion ? (
+                  <>
+                    <div className="price" style={{ color: '#d63031' }}>
+                      {formatPrice(p.price * p.promotion.discountRate)}
+                      <span style={{ fontSize: 12, color: '#b2bec3', textDecoration: 'line-through', marginLeft: 8, fontWeight: 400 }}>
+                        {formatPrice(p.price)}
+                      </span>
+                    </div>
+                    <div className="stock" style={{ color: '#e17055' }}>
+                      {p.promotion.label} · 库存: {p.stock} 件
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="price">{formatPrice(p.price)}</div>
+                    <div className="stock">库存: {p.stock} 件</div>
+                  </>
+                )}
+              </Link>
             ))}
           </div>
 

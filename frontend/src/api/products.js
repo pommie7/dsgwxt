@@ -3,7 +3,7 @@
  * 支持真实 API 调用 + Mock 数据自动降级
  */
 import request from '../utils/request';
-import { getProducts as mockGetProducts } from '../utils/mock';
+import { getProducts as mockGetProducts, getProductById as mockGetProductById } from '../utils/mock';
 
 // 可通过 URL 参数 ?mock=1 强制使用 Mock
 const USE_MOCK =
@@ -36,8 +36,16 @@ export async function listProducts(params = {}) {
 }
 
 /**
- * 获取商品详情
+ * 获取商品详情（含促销信息）
  */
-export function getProduct(id) {
-  return request.get(`/products/${id}`);
+export async function getProduct(id) {
+  if (USE_MOCK) {
+    return mockGetProductById(id);
+  }
+  try {
+    return await request.get(`/products/${id}`);
+  } catch (err) {
+    console.warn('[API] 无法连接后端，自动切换到 Mock 数据', err.message);
+    return mockGetProductById(id);
+  }
 }

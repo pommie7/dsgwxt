@@ -12,37 +12,51 @@
  */
 
 // ---- Mock 商品数据 (25条，覆盖3个分类) ----
+// 促销结束时间工具函数: 返回从现在起 N 小时后的 ISO 字符串
+const hoursLater = (h) => new Date(Date.now() + h * 3600_000).toISOString();
+
 const ALL_PRODUCTS = [
   // ---- 手机数码 ----
-  { id: 1,  name: 'iPhone 15 Pro Max',   description: 'Apple A17 Pro芯片 256GB 原色钛金属 5G全网通',     price: 9999.00, stock: 120, category: '手机数码', image_url: '' },
-  { id: 2,  name: '华为 Mate 60 Pro',    description: '华为麒麟9000S 12GB+512GB 雅丹黑 卫星通话',         price: 6999.00, stock: 35,  category: '手机数码', image_url: '' },
-  { id: 3,  name: '小米14 Ultra',        description: '小米徕卡光学Summilux镜头 骁龙8Gen3 16GB+512GB',    price: 5999.00, stock: 55,  category: '手机数码', image_url: '' },
+  { id: 1,  name: 'iPhone 15 Pro Max',   description: 'Apple A17 Pro芯片 256GB 原色钛金属 5G全网通',     price: 9999.00, stock: 120, category: '手机数码', image_url: '',
+    promotion: { type: 'flash_sale', label: '限时秒杀', discountRate: 0.85, endTime: hoursLater(2) } },
+  { id: 2,  name: '华为 Mate 60 Pro',    description: '华为麒麟9000S 12GB+512GB 雅丹黑 卫星通话',         price: 6999.00, stock: 35,  category: '手机数码', image_url: '',
+    promotion: { type: 'limited',   label: '限量抢购', discountRate: 0.92, endTime: hoursLater(8) } },
+  { id: 3,  name: '小米14 Ultra',        description: '小米徕卡光学Summilux镜头 骁龙8Gen3 16GB+512GB',    price: 5999.00, stock: 55,  category: '手机数码', image_url: '',
+    promotion: { type: 'discount',  label: '满减优惠', discountRate: 0.88, endTime: hoursLater(24) } },
   { id: 4,  name: 'Samsung Galaxy S24+',  description: '三星 AI智能手机 骁龙8Gen3 12GB+256GB 钛灰',        price: 7499.00, stock: 40,  category: '手机数码', image_url: '' },
   { id: 5,  name: 'OPPO Find X7 Ultra',  description: 'OPPO旗舰影像 骁龙8Gen3 16GB+512GB 海阔天空',       price: 5999.00, stock: 60,  category: '手机数码', image_url: '' },
-  { id: 6,  name: 'vivo X100 Pro',       description: 'vivo蔡司超级长焦 天玑9300 16GB+512GB 星迹蓝',      price: 4999.00, stock: 70,  category: '手机数码', image_url: '' },
+  { id: 6,  name: 'vivo X100 Pro',       description: 'vivo蔡司超级长焦 天玑9300 16GB+512GB 星迹蓝',      price: 4999.00, stock: 70,  category: '手机数码', image_url: '',
+    promotion: { type: 'flash_sale', label: '限时秒杀', discountRate: 0.80, endTime: hoursLater(1) } },
   { id: 7,  name: 'AirPods Pro 2',       description: 'Apple H2芯片 主动降噪 自适应音频 USB-C',            price: 1899.00, stock: 200, category: '手机数码', image_url: '' },
-  { id: 8,  name: 'Sony WH-1000XM5',     description: '索尼旗舰无线降噪头戴式耳机 30小时续航 铂金银',       price: 2499.00, stock: 85,  category: '手机数码', image_url: '' },
+  { id: 8,  name: 'Sony WH-1000XM5',     description: '索尼旗舰无线降噪头戴式耳机 30小时续航 铂金银',       price: 2499.00, stock: 85,  category: '手机数码', image_url: '',
+    promotion: { type: 'discount',  label: '满减优惠', discountRate: 0.90, endTime: hoursLater(12) } },
   { id: 9,  name: 'Apple Watch Ultra 2', description: '苹果手表Ultra 2 GPS+蜂窝 49mm 钛金属 海洋表带',     price: 6499.00, stock: 30,  category: '手机数码', image_url: '' },
 
   // ---- 电脑办公 ----
-  { id: 10, name: 'MacBook Pro 14"',      description: 'Apple M3 Pro芯片 11核CPU 14核GPU 18GB/512GB 深空黑', price: 14999.00, stock: 50,  category: '电脑办公', image_url: '' },
+  { id: 10, name: 'MacBook Pro 14"',      description: 'Apple M3 Pro芯片 11核CPU 14核GPU 18GB/512GB 深空黑', price: 14999.00, stock: 50,  category: '电脑办公', image_url: '',
+    promotion: { type: 'new_arrival', label: '新品首发', discountRate: 0.95, endTime: hoursLater(48) } },
   { id: 11, name: 'MacBook Air 15"',      description: 'Apple M3芯片 8核CPU 10核GPU 16GB/512GB 午夜色',       price: 10499.00, stock: 45,  category: '电脑办公', image_url: '' },
-  { id: 12, name: 'iPad Air M2',          description: 'Apple M2芯片 11英寸 Liquid Retina 128GB WiFi版',       price: 4799.00, stock: 60,  category: '电脑办公', image_url: '' },
-  { id: 13, name: 'Dell U2723QE',         description: '戴尔27英寸 4K IPS Black技术 USB-C 90W充电 专业显示器', price: 3499.00, stock: 25,  category: '电脑办公', image_url: '' },
+  { id: 12, name: 'iPad Air M2',          description: 'Apple M2芯片 11英寸 Liquid Retina 128GB WiFi版',       price: 4799.00, stock: 60,  category: '电脑办公', image_url: '',
+    promotion: { type: 'flash_sale', label: '限时秒杀', discountRate: 0.82, endTime: hoursLater(3) } },
+  { id: 13, name: 'Dell U2723QE',         description: '戴尔27英寸 4K IPS Black技术 USB-C 90W充电 专业显示器', price: 3499.00, stock: 25,  category: '电脑办公', image_url: '',
+    promotion: { type: 'discount',  label: '满减优惠', discountRate: 0.90, endTime: hoursLater(6) } },
   { id: 14, name: 'ThinkPad X1 Carbon',   description: '联想14英寸商务轻薄本 i7-1365U 16GB/512GB LTE 4G',      price: 9999.00, stock: 20,  category: '电脑办公', image_url: '' },
   { id: 15, name: '华为 MateBook X Pro',  description: '华为3.1K OLED触控屏 i7-1360P 16GB/1TB 拂晓粉',        price: 8999.00, stock: 15,  category: '电脑办公', image_url: '' },
   { id: 16, name: 'Logitech MX Master 3S',description: '罗技MX大师3S 无线蓝牙鼠标 8K DPI USB-C 静音',          price: 699.00,  stock: 150, category: '电脑办公', image_url: '' },
   { id: 17, name: 'Keychron K8 Pro',      description: 'Keychron K8Pro 无线机械键盘 热插拔 Gateron G Pro茶轴', price: 499.00,  stock: 100, category: '电脑办公', image_url: '' },
 
   // ---- 家用电器 ----
-  { id: 18, name: '戴森 V15 Detect',      description: 'Dyson V15无绳吸尘器 激光探测 智能灰尘感应 60分钟续航',  price: 4990.00, stock: 40,  category: '家用电器', image_url: '' },
+  { id: 18, name: '戴森 V15 Detect',      description: 'Dyson V15无绳吸尘器 激光探测 智能灰尘感应 60分钟续航',  price: 4990.00, stock: 40,  category: '家用电器', image_url: '',
+    promotion: { type: 'flash_sale', label: '限时秒杀', discountRate: 0.75, endTime: hoursLater(4) } },
   { id: 19, name: '米家扫拖机器人2',      description: '小米扫拖一体机器人 激光导航 2800Pa吸力 智能电控水箱',     price: 1499.00, stock: 80,  category: '家用电器', image_url: '' },
   { id: 20, name: '美的洗碗机 M10',       description: 'Midea台式洗碗机 4套容量 高温除菌 超快洗 免安装',          price: 1299.00, stock: 55,  category: '家用电器', image_url: '' },
-  { id: 21, name: '格力空调 云佳1.5匹',   description: 'Gree冷暖变频空调 1.5匹 新一级能效 自清洁 壁挂式',          price: 2999.00, stock: 30,  category: '家用电器', image_url: '' },
+  { id: 21, name: '格力空调 云佳1.5匹',   description: 'Gree冷暖变频空调 1.5匹 新一级能效 自清洁 壁挂式',          price: 2999.00, stock: 30,  category: '家用电器', image_url: '',
+    promotion: { type: 'discount',  label: '满减优惠', discountRate: 0.88, endTime: hoursLater(10) } },
   { id: 22, name: '海尔冰箱 BCD-500',     description: 'Haier 500升对开门冰箱 风冷无霜 双变频 智能WIFI',          price: 3499.00, stock: 20,  category: '家用电器', image_url: '' },
   { id: 23, name: '戴森 Airwrap HS05',    description: 'Dyson美发造型器 多功能卷发棒 康达效应 防飞翘 新年红',     price: 3690.00, stock: 35,  category: '家用电器', image_url: '' },
   { id: 24, name: '小狗无线吸尘器 T12',   description: '小狗T12 Plus Rinse 擦地吸尘器 150AW吸入功率 70分钟续航',  price: 1999.00, stock: 45,  category: '家用电器', image_url: '' },
-  { id: 25, name: '追觅洗地机 H20 Ultra',description: 'Dreame H20 Ultra 洗地机 热水洗地 双侧贴边 60℃热风烘干',    price: 2999.00, stock: 65,  category: '家用电器', image_url: '' },
+  { id: 25, name: '追觅洗地机 H20 Ultra',description: 'Dreame H20 Ultra 洗地机 热水洗地 双侧贴边 60℃热风烘干',    price: 2999.00, stock: 65,  category: '家用电器', image_url: '',
+    promotion: { type: 'limited',   label: '限量抢购', discountRate: 0.93, endTime: hoursLater(5) } },
 ];
 
 // 所有可用分类
@@ -148,4 +162,23 @@ function resetMockRequestCount() {
   mockRequestCount = 0;
 }
 
-export { getProducts, getCategories, getMockRequestCount, resetMockRequestCount, ALL_CATEGORIES };
+/**
+ * Mock 获取单个商品详情
+ * @param {number} id - 商品ID
+ * @returns {Promise<Object>} { code, data: product }
+ */
+function getProductById(id) {
+  return new Promise((resolve, reject) => {
+    const delay = 100 + Math.floor(Math.random() * 200);
+    setTimeout(() => {
+      const product = ALL_PRODUCTS.find((p) => p.id === Number(id));
+      if (product) {
+        resolve({ code: 200, data: { ...product } });
+      } else {
+        reject(new Error('商品不存在'));
+      }
+    }, delay);
+  });
+}
+
+export { getProducts, getProductById, getCategories, getMockRequestCount, resetMockRequestCount, ALL_CATEGORIES };
